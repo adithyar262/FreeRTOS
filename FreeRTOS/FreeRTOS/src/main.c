@@ -11,6 +11,7 @@
 ******************************************************************************/
 #include <asf.h>
 #include "FreeRTOS.h"
+#include "SerialConsole/dUART.h"
 
 /******************************************************************************
 * Forward Declarations
@@ -70,6 +71,11 @@ BaseType_t CreateTasks(void) {
 int main (void)
 {
 	system_init();
+	
+	/* Initialize the UART console. */
+	dUART_Initialize();
+	
+	dUART_WriteString("Hello World\r\n");
 
 	CreateTasks();
 				

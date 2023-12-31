@@ -2,6 +2,16 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
+src\ASF\sam0\drivers\sercom\sercom.c
+
+src\SerialConsole\circular_buffer.c
+
+src\ASF\sam0\drivers\sercom\usart\usart.c
+
+src\ASF\sam0\drivers\sercom\usart\usart_interrupt.c
+
+src\ASF\sam0\drivers\sercom\sercom_interrupt.c
+
 src\ASF\thirdparty\freertos\freertos-10.0.0\Source\croutine.c
 
 src\ASF\thirdparty\freertos\freertos-10.0.0\Source\event_groups.c
@@ -9,6 +19,8 @@ src\ASF\thirdparty\freertos\freertos-10.0.0\Source\event_groups.c
 src\ASF\thirdparty\freertos\freertos-10.0.0\Source\portable\GCC\ARM_CM0\port.c
 
 src\ASF\thirdparty\freertos\freertos-10.0.0\Source\portable\MemMang\heap_1.c
+
+src\SerialConsole\dUART.c
 
 src\ASF\thirdparty\freertos\freertos-10.0.0\Source\list.c
 
