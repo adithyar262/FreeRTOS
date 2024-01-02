@@ -10,26 +10,22 @@
 * Includes
 ******************************************************************************/
 #include <asf.h>
+#include "main.h"
 #include "FreeRTOS.h"
 #include "SerialConsole/dUART.h"
 
 /******************************************************************************
 * Forward Declarations
 ******************************************************************************/
-void vApplicationIdleHook(void);
-void StartTasks(void);
-void vApplicationDaemonTaskStartupHook(void);
-void vApplicationStackOverflowHook(void);
-void vApplicationMallocFailedHook(void);
-void vApplicationTickHook(void);
-void LEDTask1(void * parameter);
-void LEDTask2(void * parameter);
-BaseType_t CreateTasks(void);
+
+/******************************************************************************
+* Variables
+******************************************************************************/
 
 /******************************************************************************
 * Function Implementations
 ******************************************************************************/
-
+#if (CURRENT_TASK == LEDBLINK_TASK)
 void LEDTask1(void * parameter) {
 	while(1) {
 		port_pin_set_output_level(LED_0_PIN, true);
@@ -47,10 +43,11 @@ void LEDTask2(void * parameter) {
 		vTaskDelay(300/portTICK_PERIOD_MS);
 	}
 }
+#endif
 
 BaseType_t CreateTasks(void) {
 	BaseType_t xReturn;
-	
+#if (CURRENT_TASK == LEDBLINK_TASK)
 	xReturn = xTaskCreate(LEDTask1,
 						"LED Task 1",
 						130,
@@ -64,7 +61,17 @@ BaseType_t CreateTasks(void) {
 						NULL,
 						1,
 						NULL);
-	
+#endif
+
+#if (CURRENT_TASK == QUEUE_TASK)
+	xReturn = xTaskCreate(dUART_Task,
+				"UART Task",
+				130,
+				NULL,
+				1,
+				NULL);
+
+#endif
 	return xReturn;
 }
 

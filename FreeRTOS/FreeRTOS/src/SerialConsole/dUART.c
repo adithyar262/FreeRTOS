@@ -14,8 +14,10 @@
 /******************************************************************************
 * Defines
 ******************************************************************************/
-#define RX_BUFFER_SIZE 512  ///< Size of character buffer for RX, in bytes
-#define TX_BUFFER_SIZE 512  ///< Size of character buffers for TX, in bytes
+#define RX_BUFFER_SIZE			512  // Size of character buffer for RX, in bytes
+#define TX_BUFFER_SIZE			512  // Size of character buffers for TX, in bytes
+#define MAX_INPUT_LENGTH_CLI    20	 //   Max CLI input size
+#define QUEUE_LENGTH			5
 
 /******************************************************************************
 * Variables
@@ -29,6 +31,8 @@ cbuf_handle_t cbufTx;  ///< Circular buffer handler for transmitting characters 
 
 char latestRx;  ///< Holds the latest character that was received
 char latestTx;  ///< Holds the latest character to be transmitted.
+
+QueueHandle_t MsgQueue;
 /******************************************************************************
 * Forward Declarations
 ******************************************************************************/
@@ -94,6 +98,30 @@ static void dUART_ConfigureCallbacks(void)
 * Global Functions
 ******************************************************************************/
 
+void dUART_Task(void * parameter) {
+	int value;
+	char str[MAX_INPUT_LENGTH_CLI];
+	while(1) {
+		
+		if(xQueueReceive(MsgQueue, (void*)&value, 0) == pdTRUE) {
+			if((uint8_t)latestRx == '\r') {
+				dUART_WriteString((char *)"\r\n");
+				//snprintf(str, MAX_INPUT_LENGTH_CLI - 1, rxCharacterBuffer);
+				//dUART_WriteString(str);
+				vTaskDelay(1000 / portTICK_PERIOD_MS);
+				memset(rxCharacterBuffer, 0x00, MAX_INPUT_LENGTH_CLI);
+			} else {
+				// char str[2];
+				snprintf(str, sizeof(str), "%c", latestRx);
+				dUART_WriteString(str);
+			}
+		} else {
+			
+		}
+		
+	}
+}
+
 /**************************************************************************//**
 * @fn		void dUART_WriteString(const char * string)
 * @brief		Writes a string to be written to the uart. Copies the
@@ -154,6 +182,9 @@ void dUART_Initialize(void)
     // Initialize circular buffers for RX and TX
     cbufRx = circular_buf_init((uint8_t *)rxCharacterBuffer, RX_BUFFER_SIZE);
     cbufTx = circular_buf_init((uint8_t *)txCharacterBuffer, RX_BUFFER_SIZE);
+	
+	// Initialize Queue
+	MsgQueue = xQueueCreate(QUEUE_LENGTH, sizeof(char));
 
     // Configure USART and Callbacks
     dUART_Configure();
@@ -187,8 +218,23 @@ void dUART_Deinitialize(void)
 void dUART_ReadCallback(struct usart_module *const usart_module)
 {
     // Add the latest read character into the RX circular Buffer
-	circular_buf_put(cbufRx, (uint8_t)latestRx);                      
-    // Order the MCU to keep reading
+	circular_buf_put(cbufRx, (uint8_t)latestRx);
+	
+	if(xQueueSendFromISR(MsgQueue, (const void* )&latestRx, pdFALSE) != pdTRUE) {
+		dUART_WriteString("Queue Full!!\r\n");
+	}
+	/*
+	char str[2];
+	snprintf(str, sizeof(str), "%c", latestRx);
+	dUART_WriteString(str);
+	
+	if((uint8_t)latestRx == 13) {
+		if(xQueueSendFromISR(MsgQueue, (const void* )&cbufRx, pdFALSE) != pdTRUE) {
+			dUART_WriteString("Queue Full!!\r\n");
+		}
+	}
+	*/
+	// Order the MCU to keep reading
 	usart_read_buffer_job(&usart_instance, (uint8_t *)&latestRx, 1);  
 }
 

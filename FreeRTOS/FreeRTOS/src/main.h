@@ -1,22 +1,24 @@
 /**************************************************************************//**
-* @file      dUART.h
-* @brief     UART Driver for serial communication
+* @file      main.h
+* @brief     Main file header
 * @author    Adi
 * @date      2023-12-31
 
 ******************************************************************************/
-#ifndef DUART_H_
-#define DUART_H_
+#ifndef MAIN_H_
+#define MAIN_H_
 
 /******************************************************************************
 * Includes
 ******************************************************************************/
-#include <string.h>
-#include "circular_buffer.h"
+
 /******************************************************************************
 * Defines
 ******************************************************************************/
+#define LEDBLINK_TASK	0
+#define QUEUE_TASK		1
 
+#define CURRENT_TASK	QUEUE_TASK
 /******************************************************************************
 * Variables
 ******************************************************************************/
@@ -24,10 +26,22 @@
 /******************************************************************************
 * Function Prototypes
 ******************************************************************************/
-void dUART_Task(void * parameter);
-void dUART_WriteString(const char *string);
-int dUART_ReadCharacter(uint8_t *rxChar);
-void dUART_Initialize(void);
-void dUART_Deinitialize(void);
+void vApplicationIdleHook(void);
+void StartTasks(void);
+void vApplicationDaemonTaskStartupHook(void);
+void vApplicationStackOverflowHook(void);
+void vApplicationMallocFailedHook(void);
+void vApplicationTickHook(void);
+void LEDTask1(void * parameter);
+void LEDTask2(void * parameter);
+BaseType_t CreateTasks(void);
 
-#endif /* DUART_H_ */
+#endif /* MAIN_H_ */
+
+
+
+
+
+
+
+

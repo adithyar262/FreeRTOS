@@ -629,6 +629,9 @@
     <Compile Include="src\ASF\sam0\drivers\sercom\sercom.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\main.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\SerialConsole\circular_buffer.c">
       <SubType>compile</SubType>
     </Compile>
