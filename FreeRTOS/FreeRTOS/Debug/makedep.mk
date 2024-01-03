@@ -6,6 +6,8 @@ src\ASF\sam0\drivers\sercom\sercom.c
 
 src\SerialConsole\circular_buffer.c
 
+src\SerialConsole\CLI.c
+
 src\ASF\sam0\drivers\sercom\usart\usart.c
 
 src\ASF\sam0\drivers\sercom\usart\usart_interrupt.c

@@ -45,6 +45,27 @@ void LEDTask2(void * parameter) {
 }
 #endif
 
+void LED_Task(void * parameter) {
+	
+	// Initialize Queue
+	LEDQueue = xQueueCreate(QUEUE_LENGTH, sizeof(int));
+	int delay = 500;
+	while(1) {
+		if(xQueueReceive(LEDQueue, (void*)&delay, 0) == pdTRUE) {
+			
+			char str[25];
+			snprintf(str, sizeof(str) - 1, "LED Blink at - %d ms\r\n", delay);
+			dUART_WriteString(str);
+		} else {
+			
+		}
+		port_pin_set_output_level(LED_0_PIN, true);
+		vTaskDelay(delay/portTICK_PERIOD_MS);
+		port_pin_set_output_level(LED_0_PIN, false);
+		vTaskDelay(delay/portTICK_PERIOD_MS);
+	}
+}
+
 BaseType_t CreateTasks(void) {
 	BaseType_t xReturn;
 #if (CURRENT_TASK == LEDBLINK_TASK)
@@ -70,6 +91,13 @@ BaseType_t CreateTasks(void) {
 				NULL,
 				1,
 				NULL);
+				
+	xReturn = xTaskCreate(LED_Task,
+						"LED Task",
+						130,
+						NULL,
+						1,
+						NULL);
 
 #endif
 	return xReturn;

@@ -19,10 +19,11 @@
 #define QUEUE_TASK		1
 
 #define CURRENT_TASK	QUEUE_TASK
+#define QUEUE_LENGTH	20
 /******************************************************************************
 * Variables
 ******************************************************************************/
-
+QueueHandle_t LEDQueue;
 /******************************************************************************
 * Function Prototypes
 ******************************************************************************/
@@ -34,6 +35,8 @@ void vApplicationMallocFailedHook(void);
 void vApplicationTickHook(void);
 void LEDTask1(void * parameter);
 void LEDTask2(void * parameter);
+
+void LED_Task(void * parameter);
 BaseType_t CreateTasks(void);
 
 #endif /* MAIN_H_ */

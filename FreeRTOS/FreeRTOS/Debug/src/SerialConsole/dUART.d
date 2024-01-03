@@ -159,7 +159,8 @@ src/SerialConsole/dUART.d src/SerialConsole/dUART.o: \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\string.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\xlocale.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\sys\string.h \
- ../src/SerialConsole/circular_buffer.h
+ ../src/main.h ../src/SerialConsole/circular_buffer.h \
+ ../src/SerialConsole/CLI.h
 
 ../src/asf.h:
 
@@ -485,4 +486,8 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\sys\string.h:
 
+../src/main.h:
+
 ../src/SerialConsole/circular_buffer.h:
+
+../src/SerialConsole/CLI.h:

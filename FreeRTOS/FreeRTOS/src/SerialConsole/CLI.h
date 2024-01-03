@@ -1,23 +1,21 @@
 /**************************************************************************//**
-* @file      dUART.h
-* @brief     UART Driver for serial communication
+* @file      CLI.h
+* @brief     Files managing command line arguments
 * @author    Adi
-* @date      2023-12-31
+* @date      2024-1-2
 
 ******************************************************************************/
-#ifndef DUART_H_
-#define DUART_H_
+#ifndef CLI_H_
+#define CLI_H_
 
 /******************************************************************************
 * Includes
 ******************************************************************************/
-#include <string.h>
-#include "main.h"
-#include "circular_buffer.h"
+#include "dUART.h"
 /******************************************************************************
 * Defines
 ******************************************************************************/
-
+#define COMMAND_LED		"led"
 /******************************************************************************
 * Variables
 ******************************************************************************/
@@ -25,10 +23,9 @@
 /******************************************************************************
 * Function Prototypes
 ******************************************************************************/
-void dUART_Task(void * parameter);
-void dUART_WriteString(const char *string);
-int dUART_ReadCharacter(uint8_t *rxChar);
-void dUART_Initialize(void);
-void dUART_Deinitialize(void);
+int32_t CLI_ExtractCmd(char * cmd, int32_t length);
 
-#endif /* DUART_H_ */
+
+
+
+#endif /* CLI_H_ */

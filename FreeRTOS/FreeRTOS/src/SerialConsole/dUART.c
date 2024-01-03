@@ -11,13 +11,13 @@
 ******************************************************************************/
 #include <asf.h>
 #include "dUART.h"
+#include "CLI.h"
 /******************************************************************************
 * Defines
 ******************************************************************************/
 #define RX_BUFFER_SIZE			512  // Size of character buffer for RX, in bytes
 #define TX_BUFFER_SIZE			512  // Size of character buffers for TX, in bytes
 #define MAX_INPUT_LENGTH_CLI    20	 //   Max CLI input size
-#define QUEUE_LENGTH			5
 
 /******************************************************************************
 * Variables
@@ -97,19 +97,23 @@ static void dUART_ConfigureCallbacks(void)
 /******************************************************************************
 * Global Functions
 ******************************************************************************/
-
+char Command[MAX_INPUT_LENGTH_CLI];
 void dUART_Task(void * parameter) {
-	int value;
+	int value, delay;
 	char str[MAX_INPUT_LENGTH_CLI];
 	while(1) {
 		
 		if(xQueueReceive(MsgQueue, (void*)&value, 0) == pdTRUE) {
 			if((uint8_t)latestRx == '\r') {
 				dUART_WriteString((char *)"\r\n");
-				//snprintf(str, MAX_INPUT_LENGTH_CLI - 1, rxCharacterBuffer);
-				//dUART_WriteString(str);
+				snprintf(Command, MAX_INPUT_LENGTH_CLI - 1, rxCharacterBuffer);
+				delay = CLI_ExtractCmd(Command, MAX_INPUT_LENGTH_CLI);
 				vTaskDelay(1000 / portTICK_PERIOD_MS);
-				memset(rxCharacterBuffer, 0x00, MAX_INPUT_LENGTH_CLI);
+				circular_buf_reset(cbufRx);
+				memset(Command, 0x00, MAX_INPUT_LENGTH_CLI);
+				if(xQueueSend(LEDQueue, (const void* )&delay, pdFALSE) != pdTRUE) {
+					dUART_WriteString("LED Queue Full!!\r\n");
+				}
 			} else {
 				// char str[2];
 				snprintf(str, sizeof(str), "%c", latestRx);
@@ -223,17 +227,7 @@ void dUART_ReadCallback(struct usart_module *const usart_module)
 	if(xQueueSendFromISR(MsgQueue, (const void* )&latestRx, pdFALSE) != pdTRUE) {
 		dUART_WriteString("Queue Full!!\r\n");
 	}
-	/*
-	char str[2];
-	snprintf(str, sizeof(str), "%c", latestRx);
-	dUART_WriteString(str);
-	
-	if((uint8_t)latestRx == 13) {
-		if(xQueueSendFromISR(MsgQueue, (const void* )&cbufRx, pdFALSE) != pdTRUE) {
-			dUART_WriteString("Queue Full!!\r\n");
-		}
-	}
-	*/
+
 	// Order the MCU to keep reading
 	usart_read_buffer_job(&usart_instance, (uint8_t *)&latestRx, 1);  
 }
